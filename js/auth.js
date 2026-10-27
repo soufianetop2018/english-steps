@@ -41,8 +41,7 @@ Screens.account = mode => {
         <div class="auth-error" id="au-error" role="alert" hidden></div>
         <button class="btn primary big wide" type="submit">✔ ${esc(t("create_account"))}</button>
       </form>
-      <p class="auth-switch">${esc(t("have_account"))} <a href="#/account/login">${esc(t("sign_in"))}</a></p>
-      <p class="muted small">${esc(t("shared_account_note"))}</p>`,
+      <p class="auth-switch">${esc(t("have_account"))} <a href="#/account/login">${esc(t("sign_in"))}</a></p>`,
     login: `<h2>${esc(t("login_title"))}</h2><p class="muted">${esc(t("login_intro"))}</p>
       <form id="auth-form" novalidate>
         ${emailField}

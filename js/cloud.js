@@ -1,14 +1,13 @@
 /*
- * Compte (facultatif) et sauvegarde en ligne avec Supabase.
- * Sans compte, tout reste sur l'appareil. Avec un compte SYNTRIX FIKRA (le même que pour
- * « Petit Français » et « Hurufi »), chaque apprenant est une ligne de la table english_learners ; la sécurité
- * RLS garantit que chacun ne voit que ses apprenants (voir supabase/schema.sql).
+ * Compte et sauvegarde en ligne avec Supabase, dans un projet propre à English Steps (comptes
+ * indépendants de « Petit Français » et « Hurufi ») : chaque apprenant est une ligne de la table
+ * english_learners ; la sécurité RLS garantit que chacun ne voit que ses apprenants (voir supabase/schema.sql).
  */
 
 const CLOUD = {
-  url: "https://aouqeijefinznksaizig.supabase.co",
-  key: "sb_publishable_WV3O2dovNw2Bvnc6ccJd9Q_Ns_TJoXx",   // clé publique (faite pour le navigateur)
-  site: "https://soufianetop2018.github.io/english-steps/",       // les liens reçus par e-mail ouvrent le site
+  url: "https://phwnnlwvejrqxzcukqgq.supabase.co",
+  key: "sb_publishable_j6gvcpajswVTgI1ZhIHV5Q_LVy02m0z",   // clé publique (faite pour le navigateur)
+  site: "https://english-steps-kyca.onrender.com/",        // les liens reçus par e-mail ouvrent le site
   table: "english_learners",
   deleteFn: "englishsteps_delete_account",
 };
@@ -25,7 +24,8 @@ const Cloud = {
   init() {
     if (!window.supabase) return;
     this.client = supabase.createClient(CLOUD.url, CLOUD.key, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "englishsteps-auth" },
+      // Clé « -2 » : on ignore les sessions de l'ancien projet partagé (jetons refusés par celui-ci).
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "englishsteps-auth-2" },
     });
     this.client.auth.onAuthStateChange((event, session) => {
       const had = this.session;
@@ -61,11 +61,12 @@ const Cloud = {
 
   /* Le compte est obligatoire. Une fois connecté, on retient le compte sur l'appareil : sans Internet
      (ou pendant que le jeton se renouvelle), l'appli reste utilisable et se synchronise ensuite. */
-  signedIn() { return !!(this.session || Store.s.account); },
+  // Un compte retenu d'un autre projet Supabase (l'ancien projet partagé) ne compte pas.
+  signedIn() { const a = Store.s.account; return !!(this.session || (a && a.project === CLOUD.url)); },
   remember() {
-    const u = this.session.user;
-    if (!Store.s.account || Store.s.account.uid !== u.id) {
-      Store.s.account = { uid: u.id, email: u.email };
+    const u = this.session.user, a = Store.s.account;
+    if (!a || a.uid !== u.id || a.project !== CLOUD.url) {
+      Store.s.account = { uid: u.id, email: u.email, project: CLOUD.url };
       Store.s.knownAccount = true;          // la prochaine fois, proposer « se connecter » plutôt que l'inscription
       Store.save();
     }

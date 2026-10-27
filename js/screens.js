@@ -339,7 +339,7 @@ HelperTabs.account = el => {
     <h2>☁️ ${esc(t("account_title"))}</h2>
     <p>${esc(t("signed_in_as"))} <b dir="ltr">${esc(Cloud.email())}</b></p>
     <p id="ac-status">${esc(st)}</p>
-    <ul class="perks"><li>${esc(t("perk_backup"))}</li><li>${esc(t("perk_devices"))}</li><li>${esc(t("perk_shared"))}</li></ul>
+    <ul class="perks"><li>${esc(t("perk_backup"))}</li><li>${esc(t("perk_devices"))}</li></ul>
     <div class="row wrap"><button class="btn secondary" id="ac-sync" ${Cloud.session ? "" : "disabled"}>🔄 ${esc(t("sync_now"))}</button>
       <button class="btn ghost" id="ac-out">🚪 ${esc(t("sign_out"))}</button></div>
   </div>
